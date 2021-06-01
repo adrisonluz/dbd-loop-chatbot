@@ -7,5 +7,6 @@
     "win": "WIN: @{username} você é bom mesmo ein!? O killer desistiu de você. Parabéns!",
     "died": "DIED: @{username} você foi enganchado. A entidade te espera! O killer venceu!!!",
     "lang_not_found": "@{username} idioma não encontrado. Consulte dbd.langs para saber quais idiomas estão disponíveis.",
-    "lang_changes": "@{username} idioma ajustado com sucesso!"
+    "lang_changes": "@{username} idioma ajustado com sucesso!",
+    "langs_available" : "Os idiomas disponíveis são: "
 } 

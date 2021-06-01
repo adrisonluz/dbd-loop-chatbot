@@ -13,7 +13,7 @@
         "measurementId": ""
     },
     "Commands": [
-        "dbd.loop", "dbd.pallet"
+        "dbd.loop", "dbd.pallet", "dbd.langs", "dbd.setlang"
     ],
     "LangDefault": "pt-br",
     "Langs": [

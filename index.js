@@ -56,6 +56,21 @@ twitchClient.on("message", (channel, context, message, self) => {
                 dropPallet(userData);
             }
         }
+
+        if(message.toLowerCase() === settings.Prefix + "langs"){
+            let langs = settings.Langs;
+            let msg = '(';
+            langs.forEach(function(lang, index) {
+                msg += '"' + lang + '"';
+
+                if(index == (langs.length - 1)){
+                    msg += ')';
+                } else {
+                    msg += ', ';
+                }
+            });
+            getMsg(userData, "langs_available", msg);
+        }
     }
 
     return false;
@@ -132,10 +147,14 @@ const changeLang = (lang, userData) => {
     getMsg(userData, "lang_changes");
 }
 
-const getMsg = (userData, msg) => {
+const getMsg = (userData, msg, aditional) => {
     let lang = require('./lang/' + userData.lang + '.json');
 
-    twitchClient.say(userData.channel, lang[msg].replace("{username}", userData.username));
+    if(!aditional){
+        aditional = '';
+    }
+
+    twitchClient.say(userData.channel, lang[msg].replace("{username}", userData.username) + aditional);
 }
 
 /** Loop Functions */
