@@ -14,14 +14,14 @@ const twitchClient = new tmi.client(
             username: settings.TwitchUser,
             password: settings.TwitchAuth
         },
-        channels: ["goombaBr", "snowyyingyang"]
+        channels: ["goombaBr"]
     }
 )
 
 twitchClient.connect();
 
 twitchClient.on("connected", (address, port) => {
-    console.log("Twitch Bot has started on port" + port);
+    console.log("Twitch Bot has started on port: " + port);
 });
 
 twitchClient.on("message", (channel, context, message, self) => {
@@ -35,6 +35,8 @@ twitchClient.on("message", (channel, context, message, self) => {
         if(!userData.length){
             userData = {
                 "username": username,
+                "lang": settings.LangDefault,
+                "channel" : channel,
                 "times": 0,
                 "hit": false,
                 "pallet": false,
@@ -45,13 +47,13 @@ twitchClient.on("message", (channel, context, message, self) => {
             saveUser(userData, 'startBot');
         }
 
-        if(checkLoopTimes(channel, userData)){    
+        if(checkLoopTimes(userData)){    
             if(message.toLowerCase() === settings.Prefix + "loop"){
-                userLoop(channel, userData);
+                userLoop(userData);
             }
     
             if(message.toLowerCase() === settings.Prefix + "pallet"){
-                dropPallet(channel, userData);
+                dropPallet(userData);
             }
         }
     }
@@ -64,7 +66,7 @@ firebase.initializeApp(settings.Firebase);
 let database = firebase.database();
 
 firebase.database().ref("loops/").on("value", data => {
-    //console.log(data.val());
+    
 }, errorObject => {
     console.log(errorObject.code);
 });
@@ -86,11 +88,9 @@ const saveUser = (userData, msg) => {
 
     database.ref("loops/" + userData.username).set(userData, function(error) {
         if (error) {
-        // The write failed...
-        console.log(msg + ": Failed with error: " + error)
+            console.log(msg + ": Failed with error: " + error)
         } else {
-        // The write was successful...
-        console.log(msg + ": User saved!");
+            console.log(msg + ": User saved!");
         }
     });
 }
@@ -115,16 +115,33 @@ const isCommand = (channel, message, username) => {
             return true;
         }
 
-        twitchClient.say(channel, "@" + username + " Huummmm command not found!");
+        twitchClient.say(channel, "@" + username + " Command not found.");
     }
 
     return false;
 }
 
+const changeLang = (lang, userData) => {
+    if(!settings.Langs.includes(lang)){
+        getMsg(userData, "lang_not_found");
+        return false;
+    }
+    
+    userData.lang = lang;
+    saveUser(userData, 'changeLang');
+    getMsg(userData, "lang_changes");
+}
+
+const getMsg = (userData, msg) => {
+    let lang = require('./lang/' + userData.lang + '.json');
+
+    twitchClient.say(userData.channel, lang[msg]);
+}
+
 /** Loop Functions */
-const userLoop = (channel, userData) => {
+const userLoop = (userData) => {
     if(Math.random() >= settings.Luck){
-        userHit(channel, userData);
+        userHit(userData);
         return false;
     } 
     
@@ -134,34 +151,34 @@ const userLoop = (channel, userData) => {
     let luck = userData.luck;
     userData.luck = (luck + 0.02);
 
-    twitchClient.say(channel, "Loop! The killer keeps looping with you. Good luck " + userData.username + "!");
+    getMsg(userData, "loop_sucess");
     saveUser(userData, 'userLoop');
 
     if(Math.random() < userData.luck){
-        userWin(channel, userData);
+        userWin(userData);
     }
 }
 
-const checkLoopTimes = (channel, userData) => {
+const checkLoopTimes = (userData) => {
     if(userData.times < 4){
         return true;
     }
 
-    userHit(channel, userData);
+    userHit(userData);
 }
 
-const userHit = (channel, userData) => {
-    if(userData.hit === true){
-        userDie(channel, userData);
+const userHit = (userData) => {
+    if(userData.hit){
+        userDie(userData);
         return false;
     }
 
-    if(!userData.pallet){
-        twitchClient.say(channel, "HIT! @" + userData.username + " sorry, the killer got you! You should have dropped the pallet.");
-    } else if(!userData.pallet && userData.times === 0) {
-        twitchClient.say(channel, "HIT! @" + userData.username + " sorry, the killer got you! You dropped the pallete too close to the killer, who do you think he is?");
+    if(userData.pallet){
+        getMsg(userData, "hit_drop_pallet_soon");
+    } else if(userData.pallet && userData.times === 0) {
+        getMsg(userData, "hit_drop_pallet_closer");
     } else {
-        twitchClient.say(channel, "HIT! @" + userData.username + " sorry, the killer got you! You shouldn't have dropped the pallet so soon.");
+        getMsg(userData, "hit_not_drop_pallet");
     }
     
     userData.hit = true;
@@ -170,26 +187,26 @@ const userHit = (channel, userData) => {
     return false;
 }
 
-const dropPallet = (channel, userData) => {
+const dropPallet = (userData) => {
     if(userData.pallet){
-        userHit(channel, userData);
+        userHit(userData);
     }
 
     userData.pallet = true;
     userData.times = 0;
     saveUser(userData, 'dropPallet');
 
-    userLoop(channel, userData);
+    userLoop(userData);
 }
 
-const userWin = (channel, userData) => {
-    twitchClient.say(channel, "WIN: @" + userData.username + " you are really amazing! The killer gave up on you. Congratulations!");
+const userWin = (userData) => {
+    getMsg(userData, "win");
     delUser(userData.username);
     return false;
 }
 
-const userDie = (channel, userData) => {
-    twitchClient.say(channel, "DIED: @" + userData.username + " you were hooked. The entity awaits you! The killer won!!!");
+const userDie = (userData) => {
+    getMsg(userData, "died");
     delUser(userData.username);
     return false;
 }

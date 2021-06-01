@@ -1,0 +1,11 @@
+{
+    "cmd_not_found": "@{username} Huummmm comando não encontrado!", 
+    "loop_sucess": "LOOP: O killer está em looping com você. Boa sorte {userData.username}!",
+    "hit_drop_pallet_soon": "HIT: @{userData.username} que pena, o killer acertou você! Você não deveria ter dropado a palete tão cedo.",
+    "hit_drop_pallet_closer": "HIT: @{userData.username} que pena, o killer acertou você! Você dropou a palete muito perto do killer, o que você pensa que ele é?",
+    "hit_not_drop_pallet": "HIT: @{userData.username} que pena, o killer acertou você! Seria melhor ter dropado a palete.",
+    "win": "WIN: @{userData.username} você é bom mesmo ein!? O killer desistiu de você. Parabéns!",
+    "died": "DIED: @{userData.username} você foi enganchado. A entidade te espera! O killer venceu!!!",
+    "lang_not_found": "@{username} idioma não encontrado. Consulte dbd.langs para saber quais idiomas estão disponíveis.",
+    "lang_changes": "@{username} idioma ajustado com sucesso!"
+} 

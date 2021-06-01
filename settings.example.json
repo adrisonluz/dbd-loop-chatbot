@@ -2,8 +2,8 @@
     "TwitchUser": "",
     "TwitchAuth": "",
     "Prefix": "dbd.",
-    "Luck" : 0.5,
-    "Firebase" : {
+    "Luck": 0.5,
+    "Firebase": {
         "apiKey": "",
         "authDomain": "",
         "projectId": "",
@@ -12,7 +12,11 @@
         "appId": "",
         "measurementId": ""
     },
-    "Commands" : [
+    "Commands": [
         "dbd.loop", "dbd.pallet"
+    ],
+    "LangDefault": "pt-br",
+    "Langs": [
+        "en-us", "pt-br"
     ]
 }
