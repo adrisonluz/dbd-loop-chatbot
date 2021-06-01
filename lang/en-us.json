@@ -1,11 +1,11 @@
 {
     "cmd_not_found": "@{username} Huummmm command not found!", 
-    "loop_sucess": "LOOP: The killer keeps looping with you. Good luck {userData.username}!",
-    "hit_drop_pallet_soon": "HIT: @{userData.username} sorry, the killer got you! You shouldn't have dropped the pallet so soon.",
-    "hit_drop_pallet_closer": "HIT: @{userData.username} sorry, the killer got you! You dropped the pallete too close to the killer, who do you think he is?",
-    "hit_not_drop_pallet": "HIT: @{userData.username} sorry, the killer got you! You should have dropped the pallet.",
-    "win": "WIN: @{userData.username} you are really amazing! The killer gave up on you. Congratulations!",
-    "died": "DIED: @{userData.username} you were hooked. The entity awaits you! The killer won!!!",
+    "loop_sucess": "LOOP: The killer keeps looping with you. Good luck {username}!",
+    "hit_drop_pallet_soon": "HIT: @{username} sorry, the killer got you! You shouldn't have dropped the pallet so soon.",
+    "hit_drop_pallet_closer": "HIT: @{username} sorry, the killer got you! You dropped the pallete too close to the killer, who do you think he is?",
+    "hit_not_drop_pallet": "HIT: @{username} sorry, the killer got you! You should have dropped the pallet.",
+    "win": "WIN: @{username} you are really amazing! The killer gave up on you. Congratulations!",
+    "died": "DIED: @{username} you were hooked. The entity awaits you! The killer won!!!",
     "lang_not_found": "@{username} language not found. Look dbd.langs for available languages.",
     "lang_changes": "@{username} language changed sucessfuly!"
 }

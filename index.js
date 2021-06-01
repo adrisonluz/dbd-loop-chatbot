@@ -135,7 +135,7 @@ const changeLang = (lang, userData) => {
 const getMsg = (userData, msg) => {
     let lang = require('./lang/' + userData.lang + '.json');
 
-    twitchClient.say(userData.channel, lang[msg]);
+    twitchClient.say(userData.channel, lang[msg].replace("{username}", userData.username));
 }
 
 /** Loop Functions */
