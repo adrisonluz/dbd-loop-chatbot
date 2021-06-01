@@ -7,6 +7,6 @@
     "win": "WIN: @{username} you are really amazing! The killer gave up on you. Congratulations!",
     "died": "DIED: @{username} you were hooked. The entity awaits you! The killer won!!!",
     "lang_not_found": "@{username} language not found. Look dbd.langs for available languages.",
-    "lang_changes": "@{username} language changed sucessfuly!",
+    "lang_changes": "@{username} language changed successfully!",
     "langs_available" : "The available languages are: "
 }

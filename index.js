@@ -15,16 +15,28 @@ database.ref("channels/").on("value", function(snapshot) {
     console.log(errorObject.code);
 });
 
-const getUser = (username) => {
-    let returnData = [];
+const getUser = (username, channel) => {
+    let thisDate = new Date().getTime();
+    let userData = {
+        "username": username,
+        "lang": settings.LangDefault,
+        "channel" : channel,
+        "times": 0,
+        "hit": false,
+        "pallet": false,
+        "luck" : settings.Luck,
+        "created": thisDate
+    };
     
     database.ref('loops/' + username).on('value', function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
-            returnData[childSnapshot.key] = childSnapshot.val();
+            userData[childSnapshot.key] = childSnapshot.val();
         });
     });
 
-    return returnData;
+    userData.updated = thisDate;
+    saveUser(userData, 'startBot');
+    return userData;
 }
 
 const saveUser = (userData, msg) => {
@@ -62,23 +74,7 @@ twitchClient.on("message", (channel, context, message, self) => {
     let username = context["display-name"];
     
     if(isCommand(channel, message, username)){
-        let userData = getUser(username);
-        let thisDate = new Date().getTime();
-
-        if(userData.length == 0){
-            userData = {
-                "username": username,
-                "lang": settings.LangDefault,
-                "channel" : channel,
-                "times": 0,
-                "hit": false,
-                "pallet": false,
-                "luck" : settings.Luck,
-                "created": thisDate,
-                "updated": thisDate
-            }
-            saveUser(userData, 'startBot');
-        }
+        let userData = getUser(username, channel);
 
         if(checkLoopTimes(userData)){    
             if(message.toLowerCase() === settings.Prefix + "loop"){
@@ -104,6 +100,10 @@ twitchClient.on("message", (channel, context, message, self) => {
             });
             getMsg(userData, "langs_available", msg);
         }
+
+        if(message.toLowerCase().startsWith(settings.Prefix + 'setlang ')){
+            changeLang(message.replace(settings.Prefix + 'setlang ', ''), userData);
+        }
     }
 
     return false;
@@ -120,7 +120,7 @@ const getPrefix = (message) => {
 
 const isCommand = (channel, message, username) => {
     if(getPrefix(message)){
-        if(settings.Commands.includes(message)){
+        if(settings.Commands.includes(message) || message.startsWith(settings.Prefix + 'setlang')){
             return true;
         }
 
