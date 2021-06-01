@@ -4,11 +4,13 @@
   "description": "Through simple commands in the chat, you will simulate a loop with a random killer where you can leave alive, take a hit or fall and be hook",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "author": "Adrison Luz",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.17.1",
     "firebase": "^8.6.3",
     "tmi.js": "^1.8.3"
   }
