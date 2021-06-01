@@ -1,0 +1,18 @@
+{
+    "TwitchUser": "",
+    "TwitchAuth": "",
+    "Prefix": "dbd.",
+    "Luck" : 0.5,
+    "Firebase" : {
+        "apiKey": "",
+        "authDomain": "",
+        "projectId": "",
+        "storageBucket": "",
+        "messagingSenderId": "",
+        "appId": "",
+        "measurementId": ""
+    },
+    "Commands" : [
+        "dbd.loop", "dbd.pallet"
+    ]
+}

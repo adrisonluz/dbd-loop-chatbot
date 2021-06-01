@@ -1,0 +1,15 @@
+{
+  "name": "dbd-loop-bot",
+  "version": "1.0.0",
+  "description": "Through simple commands in the chat, you will simulate a loop with a random killer where you can leave alive, take a hit or fall and be hook",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Adrison Luz",
+  "license": "ISC",
+  "dependencies": {
+    "firebase": "^8.6.3",
+    "tmi.js": "^1.8.3"
+  }
+}
