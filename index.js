@@ -2,21 +2,55 @@ const firebase = require('firebase');
 const tmi = require('tmi.js');
 const settings = require('./settings.json');
 
+/** Firebase */
+firebase.initializeApp(settings.Firebase);
+let database = firebase.database();
+
+let channelsDB = [];
+database.ref("channels/").on("value", function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+        channelsDB.push(childSnapshot.val());
+    });
+}, errorObject => {
+    console.log(errorObject.code);
+});
+
+const getUser = (username) => {
+    let returnData = [];
+    
+    database.ref('loops/' + username).on('value', function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+            returnData[childSnapshot.key] = childSnapshot.val();
+        });
+    });
+
+    return returnData;
+}
+
+const saveUser = (userData, msg) => {
+    userData.updated = new Date().getTime();
+
+    database.ref("loops/" + userData.username).set(userData, function(error) {
+        if (error) {
+            console.log(msg + ": Failed with error: " + error)
+        } else {
+            console.log(msg + ": User saved!");
+        }
+    });
+}
+
+const delUser = (username) => {
+    database.ref('loops/' + username).remove();
+    return false;
+}
+
 /** Twitch Functions */
-const twitchClient = new tmi.client(
-    {
-        options: {debug: false},
-        connection: {
-            secure: true,
-            reconnect: true
-        },
-        identity: {
-            username: settings.TwitchUser,
-            password: settings.TwitchAuth
-        },
-        channels: ["goombaBr"]
-    }
-)
+const twitchClient = new tmi.client({
+    "options": {"debug": true},
+    "connection": {"secure": true, "reconnect": true},
+    "identity": {"username": settings.TwitchUser, "password": settings.TwitchAuth},
+    "channels": channelsDB
+});
 
 twitchClient.connect();
 
@@ -26,13 +60,12 @@ twitchClient.on("connected", (address, port) => {
 
 twitchClient.on("message", (channel, context, message, self) => {
     let username = context["display-name"];
-
+    
     if(isCommand(channel, message, username)){
         let userData = getUser(username);
         let thisDate = new Date().getTime();
-        console.log('getUser:', userData);
 
-        if(!userData.length){
+        if(userData.length == 0){
             userData = {
                 "username": username,
                 "lang": settings.LangDefault,
@@ -76,45 +109,6 @@ twitchClient.on("message", (channel, context, message, self) => {
     return false;
 });
 
-/** Firebase */
-firebase.initializeApp(settings.Firebase);
-let database = firebase.database();
-
-firebase.database().ref("loops/").on("value", data => {
-    
-}, errorObject => {
-    console.log(errorObject.code);
-});
-
-const getUser = (username) => {
-    let returnData = [];
-    
-    database.ref('loops/' + username).on('value', function(snapshot) {
-        snapshot.forEach(function(childSnapshot) {
-            returnData[childSnapshot.key] = childSnapshot.val();
-        });
-    });
-
-    return returnData;
-}
-
-const saveUser = (userData, msg) => {
-    userData.updated = new Date().getTime();
-
-    database.ref("loops/" + userData.username).set(userData, function(error) {
-        if (error) {
-            console.log(msg + ": Failed with error: " + error)
-        } else {
-            console.log(msg + ": User saved!");
-        }
-    });
-}
-
-const delUser = (username) => {
-    database.ref('loops/' + username).remove();
-    return false;
-}
-
 /** General Functions */
 const getPrefix = (message) => {
     if(message.indexOf("dbd.") != -1){
@@ -149,11 +143,11 @@ const changeLang = (lang, userData) => {
 
 const getMsg = (userData, msg, aditional) => {
     let lang = require('./lang/' + userData.lang + '.json');
-
+    console.log(userData, msg, lang[msg]);
     if(!aditional){
         aditional = '';
     }
-
+    
     twitchClient.say(userData.channel, lang[msg].replace("{username}", userData.username) + aditional);
 }
 
