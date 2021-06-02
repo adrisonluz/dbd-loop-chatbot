@@ -120,7 +120,7 @@ const getPrefix = (message) => {
 
 const isCommand = (channel, message, username) => {
     if(getPrefix(message)){
-        if(settings.Commands.includes(message) || message.startsWith(settings.Prefix + 'setlang')){
+        if(settings.Commands.includes(message) || message.startsWith(settings.Prefix + 'setlang' || message === '!dbd')){
             return true;
         }
 
