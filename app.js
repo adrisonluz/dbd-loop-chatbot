@@ -50,6 +50,9 @@ const commands = {
     },
     setlang: {
         response: (userData, argument) => changeLang(argument, userData)
+    },
+    author: {
+        response: (userData) => getMsg(userData, "author")
     }
 }
 
