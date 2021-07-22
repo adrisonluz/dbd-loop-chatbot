@@ -8,5 +8,5 @@
     "died": "DIED: @{username} você foi enganchado. A entidade te espera! O killer venceu!!!",
     "lang_not_found": "@{username} idioma não encontrado. Consulte dbd.langs para saber quais idiomas estão disponíveis.",
     "lang_changes": "@{username} idioma ajustado com sucesso!",
-    "langs_available" : "Os idiomas disponíveis são: "
+    "langs_available" : "Os idiomas disponíveis são: {aditional}. Você pode alterar o idioma com o comando \"dbd.setlang\". Exemplo: \"dbd.setlang pt-br\""
 } 

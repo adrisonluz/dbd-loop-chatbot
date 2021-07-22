@@ -17,9 +17,40 @@ const settings = {
         "appId": process.env.FIREBASE_APP_ID,
         "measurementId": process.env.FIREBASE_MEASUREMENT_ID
     },
-    "Commands" : process.env.COMMANDS,
+    "Commands" : process.env.COMMANDS.split(","),
     "LangDefault": process.env.LANG_DEFAULT,
-    "Langs": process.env.LANGS
+    "Langs": process.env.LANGS.split(",")
+}
+
+/** Command list */
+const commands = {
+    loop: {
+        response: (userData) => {
+            if(checkLoopTimes(userData)) userLoop(userData);
+        }
+    },
+    pallet: {
+        response: (userData) => {
+            if(checkLoopTimes(userData)) dropPallet(userData);
+        }
+    },
+    langs: {
+        response: (userData) => {
+            let langs = settings.Langs;
+            let msg = '';
+            langs.forEach(function(lang, index) {
+                msg += '"' + lang + '"';
+
+                if(index !== (langs.length - 1)){
+                    msg += ', ';
+                }
+            });
+            getMsg(userData, "langs_available", msg);
+        }
+    },
+    setlang: {
+        response: (userData, argument) => changeLang(argument, userData)
+    }
 }
 
 /** Firebase */
@@ -91,39 +122,16 @@ twitchClient.on("connected", (address, port) => {
 });
 
 twitchClient.on("message", (channel, context, message, self) => {
+    if(self) return;
+
     let username = context["display-name"];
-    
-    if(isCommand(channel, message, username)){
-        let userData = getUser(username, channel);
 
-        if(checkLoopTimes(userData)){    
-            if(message.toLowerCase() === settings.Prefix + "loop"){
-                userLoop(userData);
-            }
-    
-            if(message.toLowerCase() === settings.Prefix + "pallet"){
-                dropPallet(userData);
-            }
-        }
+    const [raw, command, argument] = message.match(regexpCommand);
 
-        if(message.toLowerCase() === settings.Prefix + "langs"){
-            let langs = settings.Langs;
-            let msg = '(';
-            langs.forEach(function(lang, index) {
-                msg += '"' + lang + '"';
-
-                if(index == (langs.length - 1)){
-                    msg += ')';
-                } else {
-                    msg += ', ';
-                }
-            });
-            getMsg(userData, "langs_available", msg);
-        }
-
-        if(message.toLowerCase().startsWith(settings.Prefix + 'setlang ')){
-            changeLang(message.replace(settings.Prefix + 'setlang ', ''), userData);
-        }
+    if(command){
+        let userData = getUser(username, channel); 
+        const { response } = commands[command] || {};
+        response(userData, argument);
     }
 
     return false;
@@ -138,20 +146,7 @@ const getPrefix = (message) => {
     return false;
 }
 
-const isCommand = (channel, message, username) => {
-    if(getPrefix(message)){
-        if(settings.Commands.includes(message) 
-            || message.startsWith(settings.Prefix + 'setlang') 
-            || message.indexOf("!dbd")
-            || username === "Nightbot"){
-            return true;
-        }
-
-        twitchClient.say(channel, "@" + username + " Command not found.");
-    }
-
-    return false;
-}
+const regexpCommand = new RegExp(/^dbd.([a-zA-Z0-9]+)(?:\W+)?(.*)?/);
 
 const changeLang = (lang, userData) => {
     if(!settings.Langs.includes(lang)){
@@ -166,12 +161,15 @@ const changeLang = (lang, userData) => {
 
 const getMsg = (userData, msg, aditional) => {
     let lang = require('./lang/' + userData.lang + '.json');
-    
+    let msgChat = lang[msg].replace("{username}", userData.username);
+
     if(!aditional){
         aditional = '';
+    } else {
+        msgChat = msgChat.replace("{aditional}", aditional);
     }
     
-    twitchClient.say(userData.channel, lang[msg].replace("{username}", userData.username) + aditional);
+    twitchClient.say(userData.channel, msgChat);
 }
 
 /** Loop Functions */
