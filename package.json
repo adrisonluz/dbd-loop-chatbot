@@ -7,11 +7,18 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js"
   },
+  "keywords": [
+    "dbd-loop",
+    "heroku"
+  ],
   "author": "Adrison Luz",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "firebase": "^8.6.3",
+    "firebase": "^8.7.1",
     "tmi.js": "^1.8.3"
+  },
+  "engines": {
+    "node": "14.x"
   }
 }
