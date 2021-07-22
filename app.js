@@ -120,7 +120,10 @@ const getPrefix = (message) => {
 
 const isCommand = (channel, message, username) => {
     if(getPrefix(message)){
-        if(settings.Commands.includes(message) || message.startsWith(settings.Prefix + 'setlang')){
+        if(settings.Commands.includes(message) 
+            || message.startsWith(settings.Prefix + 'setlang') 
+            || message.indexOf("!dbd")
+            || username === "Nightbot"){
             return true;
         }
 
@@ -143,7 +146,7 @@ const changeLang = (lang, userData) => {
 
 const getMsg = (userData, msg, aditional) => {
     let lang = require('./lang/' + userData.lang + '.json');
-    console.log(userData, msg, lang[msg]);
+    
     if(!aditional){
         aditional = '';
     }
@@ -217,7 +220,6 @@ const userWin = (userData) => {
     delUser(userData.username);
     return false;
 }
-
 const userDie = (userData) => {
     getMsg(userData, "died");
     delUser(userData.username);
