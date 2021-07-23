@@ -141,7 +141,7 @@ twitchClient.on("connected", (address, port) => {
 });
 
 twitchClient.on("message", (channel, context, message, self) => {
-    if(self) return;
+    if(self || !message) return;
 
     let username = context["display-name"];
 
