@@ -53,7 +53,23 @@ const commands = {
     },
     author: {
         response: (userData) => getMsg(userData, "author")
+    },
+    help: {
+        response: (userData) => {
+            var cmds = getCommands();
+            getMsg(userData, "help", cmds);
+        }
+    },
+    commands: {
+        response: (userData) => {
+            var cmds = getCommands();
+            getMsg(userData, "commands", cmds);
+        }
     }
+}
+
+const getCommands = () => {
+    return Object.keys(commands).join(', ');
 }
 
 /** Firebase */
