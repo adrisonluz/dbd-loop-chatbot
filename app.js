@@ -158,14 +158,14 @@ twitchClient.on("message", (channel, context, message, self) => {
 
 /** General Functions */
 const getPrefix = (message) => {
-    if(message.indexOf("dbd.") != -1){
+    if(message.indexOf("d!") != -1){
         return true;
     }
 
     return false;
 }
 
-const regexpCommand = new RegExp(/^dbd.([a-zA-Z0-9]+)(?:\W+)?(.*)?/);
+const regexpCommand = new RegExp(/^d!([a-zA-Z0-9]+)(?:\W+)?(.*)?/);
 
 const changeLang = (lang, userData) => {
     if(!settings.Langs.includes(lang)){

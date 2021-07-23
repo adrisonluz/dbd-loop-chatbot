@@ -6,9 +6,9 @@
     "hit_not_drop_pallet": "HIT: @{username} que pena, o killer acertou você! Seria melhor ter dropado a palete.",
     "win": "WIN: @{username} você é bom mesmo ein!? O killer desistiu de você. Parabéns!",
     "died": "DIED: @{username} você foi enganchado. A entidade te espera! O killer venceu!!!",
-    "lang_not_found": "@{username} idioma não encontrado. Consulte dbd.langs para saber quais idiomas estão disponíveis.",
+    "lang_not_found": "@{username} idioma não encontrado. Consulte d!langs para saber quais idiomas estão disponíveis.",
     "lang_changes": "@{username} idioma ajustado com sucesso!",
-    "langs_available": "Os idiomas disponíveis são: {aditional}. Você pode alterar o idioma com o comando \"dbd.setlang\". Exemplo: \"dbd.setlang pt-br\"",
+    "langs_available": "Os idiomas disponíveis são: {aditional}. Você pode alterar o idioma com o comando \"d!setlang\". Exemplo: \"d!setlang pt-br\"",
     "author": "O DBD Loop Bot foi criado por Adrison Luz (https://adrisonluz.com) em 2021. Todos os direitos reservados.",
     "help": "Através de comandos no chat, você poderá simular uma situação de looping com um killer, como acontece no DBD. De maneira semelhante ao game, você poderá permanecer em loopong, dropar a palete, ser enganchado ou fazer o killer desistir de você. Teste sua sorte! Os comandos para jogar são: {aditional}. Boa sorte!",
     "commands": "Os comandos disponíveis são: {aditional}. Boa sorte!"
