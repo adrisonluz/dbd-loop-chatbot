@@ -39,7 +39,7 @@ const commands = {
             let langs = settings.Langs;
             let msg = '';
             langs.forEach(function(lang, index) {
-                msg += '"d!' + lang + '"';
+                msg += '"' + lang + '"';
 
                 if(index !== (langs.length - 1)){
                     msg += ', ';
@@ -69,7 +69,12 @@ const commands = {
 }
 
 const getCommands = () => {
-    return Object.keys(commands).join(', ');
+    let listCommands = [];
+    Object.keys(commands).forEach(function(key, index) {
+        listCommands.push("d!" + key);
+    });
+    
+    return listCommands.join(', ');
 }
 
 /** Firebase */
