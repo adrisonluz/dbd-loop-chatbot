@@ -10,6 +10,6 @@
     "lang_changes": "@{username} idioma ajustado com sucesso!",
     "langs_available": "Os idiomas disponíveis são: {aditional}. Você pode alterar o idioma com o comando \"d!setlang\". Exemplo: \"d!setlang pt-br\"",
     "author": "O DBD Loop Bot foi criado por Adrison Luz (https://adrisonluz.com) em 2021. Todos os direitos reservados.",
-    "help": "Através de comandos no chat, você poderá simular uma situação de looping com um killer, como acontece no DBD. De maneira semelhante ao game, você poderá permanecer em loopong, dropar a palete, ser enganchado ou fazer o killer desistir de você. Teste sua sorte! Os comandos para jogar são: {aditional}. Boa sorte!",
+    "help": "Através de comandos no chat, você poderá simular uma situação de looping com um killer, como acontece no DBD. De maneira semelhante ao game, você poderá permanecer em looping, dropar a palete, ser enganchado ou fazer o killer desistir de você. Teste sua sorte! Os comandos para jogar são: {aditional}. Boa sorte!",
     "commands": "Os comandos disponíveis são: {aditional}. Boa sorte!"
 } 
