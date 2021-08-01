@@ -143,14 +143,16 @@ twitchClient.on("connected", (address, port) => {
 twitchClient.on("message", (channel, context, message, self) => {
     if(self) return;
 
-    if(message && command){
+    if(message){
         let username = context["display-name"];
 
         const [raw, command, argument] = message.match(regexpCommand);
 
-        let userData = getUser(username, channel); 
-        const { response } = commands[command] || {};
-        response(userData, argument);
+        if(command){
+            let userData = getUser(username, channel); 
+            const { response } = commands[command] || {};
+            response(userData, argument);
+        }
     }
 
     return false;
