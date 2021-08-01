@@ -39,7 +39,7 @@ const commands = {
             let langs = settings.Langs;
             let msg = '';
             langs.forEach(function(lang, index) {
-                msg += '"' + lang + '"';
+                msg += '"d!' + lang + '"';
 
                 if(index !== (langs.length - 1)){
                     msg += ', ';
