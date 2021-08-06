@@ -25,8 +25,8 @@ const settings = {
 /** Command list */
 const commands = {
     loop: {
-        response: (userData) => {
-            if(checkLoopTimes(userData)) userLoop(userData);
+        response: (userData, argument, channel) => {
+            userLoop(userData, channel);
         }
     },
     pallet: {
@@ -90,47 +90,6 @@ database.ref("channels/").on("value", function(snapshot) {
     console.log(errorObject.code);
 });
 
-const getUser = (username, channel) => {
-    let thisDate = new Date().getTime();
-    let userData = {
-        "username": username,
-        "lang": settings.LangDefault,
-        "channel" : channel,
-        "times": 0,
-        "hit": false,
-        "pallet": false,
-        "luck" : settings.Luck,
-        "created": thisDate
-    };
-    
-    database.ref('loops/' + username).on('value', function(snapshot) {
-        snapshot.forEach(function(childSnapshot) {
-            userData[childSnapshot.key] = childSnapshot.val();
-        });
-    });
-
-    userData.updated = thisDate;
-    saveUser(userData, 'startBot');
-    return userData;
-}
-
-const saveUser = (userData, msg) => {
-    userData.updated = new Date().getTime();
-
-    database.ref("loops/" + userData.username).set(userData, function(error) {
-        if (error) {
-            console.log(msg + ": Failed with error: " + error)
-        } else {
-            console.log(msg + ": User saved!");
-        }
-    });
-}
-
-const delUser = (username) => {
-    database.ref('loops/' + username).remove();
-    return false;
-}
-
 /** Twitch Functions */
 const twitchClient = new tmi.client({
     "options": {"debug": true},
@@ -146,18 +105,16 @@ twitchClient.on("connected", (address, port) => {
 });
 
 twitchClient.on("message", (channel, context, message, self) => {
-    if(self) return;
+    if(self || (message == null)) return;
 
-    if(message){
-        let username = context["display-name"];
+    let username = context["display-name"];
+    const [raw, command, argument] = message.match(regexpCommand);
 
-        const [raw, command, argument] = message.match(regexpCommand);
+    if(command){
+        let userData = getUser(username);
 
-        if(command){
-            let userData = getUser(username, channel); 
-            const { response } = commands[command] || {};
-            response(userData, argument);
-        }
+        const { response } = commands[command] || {};
+        response(userData, argument, channel);
     }
 
     return false;
@@ -199,24 +156,91 @@ const getMsg = (userData, msg, aditional) => {
 }
 
 /** Loop Functions */
-const userLoop = (userData) => {
-    if(Math.random() >= settings.Luck){
-        userHit(userData);
-        return false;
-    } 
-    
-    let times = userData.times;
-    userData.times = (times + 1);
+const getLoop = (username, channel) => {
+    let thisDate = new Date().getTime();
+    let loopId;
+    let loop = {};
+    let loopData = {
+        "username": username,
+        "channel" : channel,
+        "times": 0,
+        "hit": false,
+        "pallet": false,
+        "luck" : parseFloat(settings.Luck),
+        "status" : false,
+        "created": thisDate,
+        "closed": false
+    };
 
-    let luck = userData.luck;
-    userData.luck = (luck + 0.02);
+    database.ref('loops').orderByChild('username').equalTo(username).on('child_added', (snapshot) => {
+        console.log('achou:', snapshot.key);
+        if(snapshot){
+            loopId = snapshot.key;
+            loopData = snapshot.val();
+        }
+    }, (errorObject) => {
+        console.log('The read failed: ' + errorObject.name);
+    });
+
+    loopData.updated = thisDate;
+
+    if(!loopId){
+        loop = saveLoop(loopData, 'startBot');
+    } else {
+        loop[loopId] = loopData;
+    }
+
+    return loop;
+}
+
+const userLoop = (userData, channel) => {
+    let loop = getLoop(userData.username, channel);
+    let loopData = {};
+    let loopId;
+
+    Object.keys(loop).forEach(key => {
+        loopId = key;
+        loopData = loop[key];
+    });
+
+    /*if(Math.random() >= settings.Luck){
+        userHit(loop.username);
+        return false;
+    }*/
+
+    let times = loopData.times;
+    loopData.times = (times + 1);
+
+    let luck = loopData.luck;
+    loopData.luck = (luck + 0.02);
 
     getMsg(userData, "loop_sucess");
-    saveUser(userData, 'userLoop');
+    saveLoop(loopData, 'userLoop', loopId);
+    //saveUser(userData, 'userLoop');
 
     if(Math.random() < userData.luck){
         userWin(userData);
     }
+}
+
+const saveLoop = (loopData, msg, loopId = null) => {
+    loopData.updated = new Date().getTime();
+    let loop = {};
+
+    if(!loopId){
+        loopId = database.ref('loops').push().getKey();
+    }
+        
+    database.ref('loops').child(loopId).set(loopData, function(error) {
+        if (error) {
+            console.log(msg + ": Failed with error: " + error)
+        } else {
+            console.log(msg + ": Loop saved!");
+        }
+    });
+
+    loop[loopId] = loopData;
+    return loop;
 }
 
 const checkLoopTimes = (userData) => {
@@ -243,7 +267,7 @@ const userHit = (userData) => {
     
     userData.hit = true;
     userData.times = 0;
-    saveUser(userData, 'userHit');
+    //saveUser(userData, 'userHit');
     return false;
 }
 
@@ -259,13 +283,55 @@ const dropPallet = (userData) => {
     userLoop(userData);
 }
 
-const userWin = (userData) => {
-    getMsg(userData, "win");
-    delUser(userData.username);
+/** User functions */
+const saveUser = (userData, msg) => {
+    userData.updated = new Date().getTime();
+
+    database.ref("users/" + userData.username).set(userData, function(error) {
+        if (error) {
+            console.log(msg + ": Failed with error: " + error)
+        } else {
+            console.log(msg + ": User saved!");
+        }
+    });
+}
+
+const getUser = (username) => {
+    let thisDate = new Date().getTime();
+    let userData = {
+        "username": username,
+        "lang": settings.LangDefault,
+        "created": thisDate
+    };
+    
+    database.ref('users/' + username).on('value', function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+            userData[childSnapshot.key] = childSnapshot.val();
+        });
+    });
+
+    userData.updated = thisDate;
+    saveUser(userData, 'startBot');
+    return userData;
+}
+
+const delUser = (username) => {
+    database.ref('users/' + username).remove();
     return false;
 }
+
+const userWin = (userData) => {
+    getMsg(userData, "win");
+    userData.closed = new Date().getTime();
+    saveUser(userData);
+    //delUser(userData.username);
+    return false;
+}
+
 const userDie = (userData) => {
     getMsg(userData, "died");
-    delUser(userData.username);
+    userData.closed = new Date().getTime();
+    saveUser(userData);
+    //delUser(userData.username);
     return false;
 }
